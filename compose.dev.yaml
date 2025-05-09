@@ -1,0 +1,54 @@
+services:
+
+  devcontainer:
+    build:
+      args:
+        DEVCONTAINER_USER_GID: ${DEVCONTAINER_USER_GID:-1000}
+        DEVCONTAINER_USER_NAME: ${DEVCONTAINER_USER_NAME:-dev}
+        DEVCONTAINER_USER_UID: ${DEVCONTAINER_USER_UID:-1000}
+      context: .
+      dockerfile: Dockerfile
+      target: devcontainer
+    command: [ "-c", "sleep infinity" ]
+    entrypoint: bash
+    ports:
+      - published: ${DEVCONTAINER_PORTS_HTTP:-8080}
+        target: 8080
+    volumes:
+      - source: devcontainer.data
+        target: /home/dev
+        type: volume
+        volume:
+          nocopy: false
+          subpath: home
+      - source: ${HOME}/.gitconfig
+        target: /home/dev/.gitconfig
+        type: bind
+      - source: ${HOME}/.ssh
+        target: /home/dev/.ssh
+        type: bind
+      - source: .
+        target: /mnt/workspace
+        type: bind
+  devcontainer-setup:
+    image: busybox
+    command:
+      - -ex
+      - -c
+      - |
+        # Configure data volume
+        mkdir --parents /mnt/data/home
+        chown ${DEVCONTAINER_USER_UID:-1000}:${DEVCONTAINER_USER_GID:-1000} /mnt/data/home
+    entrypoint: sh
+    network_mode: none
+    profiles: [ setup ]
+    restart: "no"
+    volumes:
+      - source: devcontainer.data
+        target: /mnt/data
+        type: volume
+        volume:
+          nocopy: true
+
+volumes:
+  devcontainer.data:

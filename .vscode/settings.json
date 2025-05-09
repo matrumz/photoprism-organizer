@@ -1,0 +1,13 @@
+{
+    "cSpell.words": [
+        "appsettings",
+        "Devcontainer",
+        "Serilog"
+    ],
+    "editor.formatOnSave": true,
+    "files.exclude": {
+        "**/bin/": true,
+        "**/obj/": true,
+        ".mono/": true,
+    }
+}
