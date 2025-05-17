@@ -1,0 +1,44 @@
+networks:
+  demo.access:
+    attachable: true
+    driver: bridge
+    internal: false
+
+services:
+
+  photoprism-demo:
+    image: photoprism/photoprism:250426
+    ###
+    environment:
+      PHOTOPRISM_AUTH_MODE: ${PHOTOPRISM_AUTH_MODE:-public}
+      PHOTOPRISM_DATABASE_DRIVER: ${PHOTOPRISM_DATABASE_DRIVER:-sqlite}
+      PHOTOPRISM_DISABLE_RESTART: ${PHOTOPRISM_DISABLE_RESTART:-true}
+      PHOTOPRISM_DISABLE_TENSORFLOW: ${PHOTOPRISM_DISABLE_TENSORFLOW:-true}
+      PHOTOPRISM_DISABLE_TLS: ${PHOTOPRISM_DISABLE_TLS:-true}
+      PHOTOPRISM_DISABLE_VECTORS: ${PHOTOPRISM_DISABLE_VECTORS:-false}
+      PHOTOPRISM_EXPERIMENTAL: ${PHOTOPRISM_EXPERIMENTAL:-false}
+      PHOTOPRISM_GID: ${PHOTOPRISM_GID:-1000}
+      PHOTOPRISM_HTTP_COMPRESSION: ${PHOTOPRISM_HTTP_COMPRESSION:-gzip}
+      PHOTOPRISM_LOG_LEVEL: ${PHOTOPRISM_LOG_LEVEL:-debug}
+      PHOTOPRISM_PROD: ${PHOTOPRISM_PROD:-false}
+      PHOTOPRISM_READONLY: ${PHOTOPRISM_READONLY:-false}
+      PHOTOPRISM_SITE_AUTHOR: ${PHOTOPRISM_SITE_AUTHOR:-matrumz}
+      PHOTOPRISM_SITE_CAPTION: ${PHOTOPRISM_SITE_CAPTION:-Demo PhotoPrism}
+      PHOTOPRISM_SITE_DESCRIPTION: ${PHOTOPRISM_SITE_DESCRIPTION:-Demo PhotoPrism}
+      PHOTOPRISM_SITE_URL: ${PHOTOPRISM_SITE_URL:-http://localhost:2342}
+      PHOTOPRISM_UID: ${PHOTOPRISM_UID:-1000}
+      PHOTOPRISM_UMASK: ${PHOTOPRISM_UMASK:-u=rwx,g=rwx,o=rwx}
+    networks:
+      demo.access:
+    ports:
+      - published: ${PHOTOPRISM_PORT:-2342}
+        target: 2342
+    profiles:
+      - demo
+    volumes:
+      - bind:
+          create_host_path: false
+        read_only: true
+        source: ./demo/images
+        target: /photoprism/originals
+        type: bind
