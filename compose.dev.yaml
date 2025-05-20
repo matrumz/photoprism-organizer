@@ -21,13 +21,19 @@ services:
         volume:
           nocopy: false
           subpath: home
-      - source: ${HOME}/.gitconfig
+      - bind:
+          create_host_path: false
+        source: ${HOME}/.gitconfig
         target: /home/dev/.gitconfig
         type: bind
-      - source: ${HOME}/.ssh
+      - bind:
+          create_host_path: false
+        source: ${HOME}/.ssh
         target: /home/dev/.ssh
         type: bind
-      - source: .
+      - bind:
+          create_host_path: false
+        source: .
         target: /mnt/workspace
         type: bind
   devcontainer-setup:

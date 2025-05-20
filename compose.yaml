@@ -1,12 +1,14 @@
+name: photoprism-organizer
+
 networks:
-  demo.access:
+  sandbox.access:
     attachable: true
     driver: bridge
     internal: false
 
 services:
 
-  photoprism-demo:
+  photoprism-sandbox:
     image: photoprism/photoprism:250426
     ###
     environment:
@@ -22,23 +24,20 @@ services:
       PHOTOPRISM_LOG_LEVEL: ${PHOTOPRISM_LOG_LEVEL:-debug}
       PHOTOPRISM_PROD: ${PHOTOPRISM_PROD:-false}
       PHOTOPRISM_READONLY: ${PHOTOPRISM_READONLY:-false}
-      PHOTOPRISM_SITE_AUTHOR: ${PHOTOPRISM_SITE_AUTHOR:-matrumz}
-      PHOTOPRISM_SITE_CAPTION: ${PHOTOPRISM_SITE_CAPTION:-Demo PhotoPrism}
-      PHOTOPRISM_SITE_DESCRIPTION: ${PHOTOPRISM_SITE_DESCRIPTION:-Demo PhotoPrism}
-      PHOTOPRISM_SITE_URL: ${PHOTOPRISM_SITE_URL:-http://localhost:2342}
+      PHOTOPRISM_SITE_URL: ${PHOTOPRISM_SITE_URL:-http://host.docker.internal:2342}
       PHOTOPRISM_UID: ${PHOTOPRISM_UID:-1000}
       PHOTOPRISM_UMASK: ${PHOTOPRISM_UMASK:-u=rwx,g=rwx,o=rwx}
     networks:
-      demo.access:
+      sandbox.access:
     ports:
       - published: ${PHOTOPRISM_PORT:-2342}
         target: 2342
     profiles:
-      - demo
+      - sandbox
     volumes:
       - bind:
           create_host_path: false
         read_only: true
-        source: ./demo/images
+        source: ${DEVCONTAINER_WORKSPACE_HOST_PATH:-.}/demo/images
         target: /photoprism/originals
         type: bind
