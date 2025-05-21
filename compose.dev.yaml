@@ -38,6 +38,7 @@ services:
         type: bind
   devcontainer-setup:
     image: busybox
+    ###
     command:
       - -ex
       - -c
@@ -47,7 +48,9 @@ services:
         chown ${DEVCONTAINER_USER_UID:-1000}:${DEVCONTAINER_USER_GID:-1000} /mnt/data/home
     entrypoint: sh
     network_mode: none
-    profiles: [ setup ]
+    profiles:
+      - setup
+    pull_policy: missing
     restart: "no"
     volumes:
       - source: devcontainer.data

@@ -11,9 +11,22 @@ services:
   photoprism-sandbox:
     image: photoprism/photoprism:250426
     ###
+    depends_on:
+      mariadb-sandbox:
+        condition: service_healthy
+        required: true
+        restart: true
+      photoprism-sandbox-setup:
+        condition: service_completed_successfully
+        required: true
+        restart: true
     environment:
       PHOTOPRISM_AUTH_MODE: ${PHOTOPRISM_AUTH_MODE:-public}
-      PHOTOPRISM_DATABASE_DRIVER: ${PHOTOPRISM_DATABASE_DRIVER:-sqlite}
+      PHOTOPRISM_DATABASE_DRIVER: ${PHOTOPRISM_DATABASE_DRIVER:-mysql}
+      PHOTOPRISM_DATABASE_NAME: photoprism
+      PHOTOPRISM_DATABASE_PASSWORD: ${PHOTOPRISM_DATABASE_PASSWORD:?PHOTOPRISM_DATABASE_PASSWORD not set}
+      PHOTOPRISM_DATABASE_SERVER: mariadb-sandbox
+      PHOTOPRISM_DATABASE_USER: photoprism
       PHOTOPRISM_DISABLE_RESTART: ${PHOTOPRISM_DISABLE_RESTART:-true}
       PHOTOPRISM_DISABLE_TENSORFLOW: ${PHOTOPRISM_DISABLE_TENSORFLOW:-true}
       PHOTOPRISM_DISABLE_TLS: ${PHOTOPRISM_DISABLE_TLS:-true}
@@ -34,6 +47,7 @@ services:
         target: 2342
     profiles:
       - sandbox
+    restart: unless-stopped
     volumes:
       - bind:
           create_host_path: false
@@ -41,3 +55,59 @@ services:
         source: ${DEVCONTAINER_WORKSPACE_HOST_PATH:-.}/demo/images
         target: /photoprism/originals
         type: bind
+
+  photoprism-sandbox-setup:
+    image: mariadb:10
+    ###
+    command:
+      - -ex
+      - -c
+      - |
+        # Create configuration file to simplify future commands
+        cat << EOF > ~/.my.cnf
+        [client]
+        host = mariadb-sandbox
+        user = root
+        password = $$MARIADB_ROOT_PASSWORD
+        EOF
+        # Create database and user
+        mariadb << EOF
+        CREATE DATABASE IF NOT EXISTS photoprism;
+        CREATE USER IF NOT EXISTS 'photoprism'@'%' IDENTIFIED BY '$$PHOTOPRISM_DATABASE_PASSWORD';
+        GRANT ALL PRIVILEGES ON photoprism.* TO 'photoprism'@'%';
+        FLUSH PRIVILEGES;
+        EOF
+    depends_on:
+      mariadb-sandbox:
+        condition: service_healthy
+        required: true
+        restart: true
+    entrypoint: bash
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      PHOTOPRISM_DATABASE_PASSWORD: ${PHOTOPRISM_DATABASE_PASSWORD}
+    networks:
+      sandbox.access:
+    profiles:
+     - sandbox
+    restart: "no"
+
+  mariadb-sandbox:
+    image: mariadb:10
+    ###
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:?MARIADB_ROOT_PASSWORD not set}
+    healthcheck:
+      interval: 10s
+      retries: 3
+      start_period: 10s
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      timeout: 5s
+    networks:
+      sandbox.access:
+    ports:
+      - published: ${MARIADB_PORT:-3306}
+        target: 3306
+    profiles:
+      - sandbox
+    restart: unless-stopped
