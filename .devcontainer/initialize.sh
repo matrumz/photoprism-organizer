@@ -4,7 +4,7 @@ set -exo pipefail
 function random-string() {
   # Generate a random string of the specified length (default: 16)
   local length=${1:-16}
-  tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c $length
+  tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c $length || true
 }
 
 touch .env

@@ -16,11 +16,11 @@ services:
         condition: service_healthy
         required: true
         restart: true
-      photoprism-sandbox-setup:
+      photoprism-sandbox-setup-pre:
         condition: service_completed_successfully
         required: true
         restart: true
-    environment:
+    environment: &services-photoprism-sandbox-environment
       PHOTOPRISM_AUTH_MODE: ${PHOTOPRISM_AUTH_MODE:-public}
       PHOTOPRISM_DATABASE_DRIVER: ${PHOTOPRISM_DATABASE_DRIVER:-mysql}
       PHOTOPRISM_DATABASE_NAME: photoprism
@@ -40,6 +40,12 @@ services:
       PHOTOPRISM_SITE_URL: ${PHOTOPRISM_SITE_URL:-http://host.docker.internal:2342}
       PHOTOPRISM_UID: ${PHOTOPRISM_UID:-1000}
       PHOTOPRISM_UMASK: ${PHOTOPRISM_UMASK:-u=rwx,g=rwx,o=rwx}
+    healthcheck:
+      interval: 10s
+      retries: 3
+      start_period: 10s
+      test: ["CMD-SHELL", 'curl --silent localhost:2342/api/v1/status | jq -r .status | grep -q "^operational$"']
+      timeout: 5s
     networks:
       sandbox.access:
     ports:
@@ -56,7 +62,7 @@ services:
         target: /photoprism/originals
         type: bind
 
-  photoprism-sandbox-setup:
+  photoprism-sandbox-setup-pre:
     image: mariadb:10
     ###
     command:
@@ -86,6 +92,45 @@ services:
     environment:
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
       PHOTOPRISM_DATABASE_PASSWORD: ${PHOTOPRISM_DATABASE_PASSWORD}
+    networks:
+      sandbox.access:
+    profiles:
+     - sandbox
+    restart: "no"
+
+  photoprism-sandbox-setup-post:
+    image: photoprism/photoprism:250426
+    ###
+    command:
+      - -c
+      - |
+        import http.client
+        import json
+        # Define HTTP connection
+        photoprismHttp = http.client.HTTPConnection("photoprism-sandbox", 2342)
+        # Start index - stop on error
+        photoprismHttp.request("POST", "/api/v1/index",
+          headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body = json.dumps({
+            "cleanup": True,
+            "rescan": True
+          })
+        )
+        indexResponse = photoprismHttp.getresponse()
+        if indexResponse.status != 200:
+          print("Index failed: " + str(indexResponse.status) + " " + indexResponse.reason)
+          exit(1)
+    depends_on:
+      photoprism-sandbox:
+        condition: service_healthy
+        required: true
+        restart: true
+    entrypoint: python3
+    environment:
+      <<: *services-photoprism-sandbox-environment
     networks:
       sandbox.access:
     profiles:
