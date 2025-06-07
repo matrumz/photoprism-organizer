@@ -9,7 +9,9 @@
     "postCreateCommand": "./.devcontainer/post-create.sh",
     "postStartCommand": "./.devcontainer/post-start.sh",
     "postAttachCommand": "./.devcontainer/post-attach.sh",
-    "remoteUser": "dev",
+    "containerEnv": {
+        "DEVCONTAINER_WORKSPACE_HOST_PATH": "${localWorkspaceFolder}"
+    },
     "workspaceFolder": "/mnt/workspace",
     "features": {
         "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
