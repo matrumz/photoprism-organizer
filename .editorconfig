@@ -30,6 +30,11 @@ indent_size = 4
 [*.sh]
 indent_size = 2
 
+# Python scripts
+[*.py]
+indent_size = 4
+indent_style = tab
+
 # Markdown files
 [*.md]
 indent_size = 4
