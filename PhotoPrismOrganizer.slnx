@@ -3,4 +3,7 @@
     <Project Path="src/PhotoPrism.Sdk/PhotoPrism.Sdk.csproj" />
     <Project Path="src/PhotoPrismOrganizer.Common/PhotoPrismOrganizer.Common.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PhotoPrismOrganizer.Common.Tests/PhotoPrismOrganizer.Common.Tests.csproj" />
+  </Folder>
 </Solution>
