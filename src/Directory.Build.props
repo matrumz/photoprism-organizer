@@ -1,0 +1,12 @@
+<Project>
+
+	<!-- Import parent Directory.Build.props first -->
+	<Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory)../, 'Directory.Build.props'))\Directory.Build.props" />
+
+	<!-- Automatically reference the Common project -->
+	<ItemGroup>
+		<ProjectReference Include="$(SourceProjectRoot)PhotoPrismOrganizer.Common\PhotoPrismOrganizer.Common.csproj"
+											Condition="Exists('$(SourceProjectRoot)PhotoPrismOrganizer.Common\PhotoPrismOrganizer.Common.csproj') AND '$(MSBuildProjectName)' != 'PhotoPrismOrganizer.Common'" />
+	</ItemGroup>
+
+</Project>

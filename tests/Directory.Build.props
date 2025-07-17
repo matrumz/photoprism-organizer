@@ -1,0 +1,25 @@
+<Project>
+
+	<!-- Import parent Directory.Build.props first -->
+	<Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory)../, 'Directory.Build.props'))\Directory.Build.props" />
+
+	<PropertyGroup Label="Base Project Properties">
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit" />
+	</ItemGroup>
+
+	<!-- Calculate the source project name -->
+	<PropertyGroup>
+		<SourceProjectName>$([System.String]::Copy('$(MSBuildProjectName)').Replace('.Tests', '').Replace('.Test', ''))</SourceProjectName>
+	</PropertyGroup>
+
+	<!-- Automatically reference the corresponding source project -->
+	<ItemGroup Condition="'$(MSBuildProjectName)' != '$(SourceProjectName)'">
+		<ProjectReference Include="$(SourceProjectRoot)$(SourceProjectName)\$(SourceProjectName).csproj"
+											Condition="Exists('$(SourceProjectRoot)$(SourceProjectName)\$(SourceProjectName).csproj')" />
+	</ItemGroup>
+
+</Project>
