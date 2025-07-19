@@ -3,6 +3,7 @@ using PhotoPrismOrganizer.Common.Sdks.Compatibility;
 namespace PhotoPrismOrganizer.Common.Tests.Unit.Sdks.Compatibility;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Mimicking non-test classes")]
+[Trait("Category", "Unit")]
 public class OperationRegistryTests
 {
     // Test service classes with various operation configurations

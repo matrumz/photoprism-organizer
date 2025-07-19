@@ -2,6 +2,7 @@ using PhotoPrismOrganizer.Common.Sdks.Compatibility;
 
 namespace PhotoPrismOrganizer.Common.Tests.Unit.Sdks.Compatibility;
 
+[Trait("Category", "Unit")]
 public class OperationAttributeTests
 {
     [Theory]
