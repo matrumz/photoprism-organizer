@@ -55,8 +55,75 @@ public class OperationRegistryTests
     {
         [Operation("nullable-test", since: "1.0.0")]
         public string NullableTest(int id, string? nullableParam) => $"{id}-{nullableParam ?? "null"}";
+
+        [Operation("mixed-params-test", since: "1.0.0")]
+        public string MixedParamsTest(int requiredId, string requiredName, string? optionalNullable) =>
+            $"{requiredId}-{requiredName}-{optionalNullable ?? "null"}";
     }
 
+    public class TestServiceWithAsyncMethods
+    {
+        [Operation("async-operation", since: "1.0.0")]
+        public async Task<string> GetDataAsync(int id)
+        {
+            await Task.Delay(1); // Simulate async work
+            return $"Async-{id}";
+        }
+
+        [Operation("void-async-operation", since: "1.0.0")]
+        public async Task ProcessDataAsync(string data)
+        {
+            await Task.Delay(1);
+            // Void async operation
+        }
+
+        [Operation("async-with-nullable", since: "1.0.0")]
+        public async Task<string> AsyncWithNullableAsync(int id, string? optional)
+        {
+            await Task.Delay(1);
+            return $"AsyncNullable-{id}-{optional ?? "null"}";
+        }
+    }
+
+    public class TestServiceWithBothSyncAndAsync
+    {
+        [Operation("flexible-operation", since: "1.0.0", priority: 1)]
+        public string GetDataSync(int id) => $"Sync-{id}";
+
+        [Operation("flexible-operation", since: "1.0.0", priority: 1)]
+        public async Task<string> GetDataAsync(int id)
+        {
+            await Task.Delay(1);
+            return $"Async-{id}";
+        }
+
+        [Operation("priority-test-sync", since: "1.0.0", priority: 2)]
+        public string HighPrioritySync(int id) => $"HighSync-{id}";
+
+        [Operation("priority-test-sync", since: "1.0.0", priority: 1)]
+        public async Task<string> LowPriorityAsync(int id)
+        {
+            await Task.Delay(1);
+            return $"LowAsync-{id}";
+        }
+    }
+
+    public class TestServiceWithAsyncVersions
+    {
+        [Operation("versioned-async", since: "1.0.0", until: "2.0.0")]
+        public async Task<string> GetDataV1Async(int id)
+        {
+            await Task.Delay(1);
+            return $"AsyncV1-{id}";
+        }
+
+        [Operation("versioned-async", since: "2.0.0", priority: 1)]
+        public async Task<string> GetDataV2Async(int id)
+        {
+            await Task.Delay(1);
+            return $"AsyncV2-{id}";
+        }
+    }
     [Fact]
     public void Constructor_WithEmptyServices_CreatesEmptyRegistry()
     {
@@ -125,48 +192,45 @@ public class OperationRegistryTests
     }
 
     [Fact]
-    public void Invoke_WithParameterMismatch_ReturnsNull()
+    public void Invoke_WithParameterMismatch_ThrowsNotImplementedException()
     {
         // Arrange
         var version = new SemanticVersion(1, 0, 0);
         var services = new object[] { new TestServiceV1() };
         var registry = new OperationRegistry(version, services);
 
-        // Act - Missing required parameter
-        var result = registry.Invoke("get-user", new { wrongParamName = 123 });
-
-        // Assert
-        Assert.Null(result);
+        // Act & Assert - Missing required parameter
+        var ex = Assert.Throws<NotImplementedException>(() =>
+            registry.Invoke("get-user", new { wrongParamName = 123 })
+        );
     }
 
     [Fact]
-    public void Invoke_WithTypeMismatch_ReturnsNull()
+    public void Invoke_WithTypeMismatch_ThrowsNotImplementedException()
     {
         // Arrange
         var version = new SemanticVersion(1, 0, 0);
         var services = new object[] { new TestServiceV1() };
         var registry = new OperationRegistry(version, services);
 
-        // Act - Wrong parameter type (string instead of int)
-        var result = registry.Invoke("get-user", new { id = "not-an-int" });
-
-        // Assert
-        Assert.Null(result);
+        // Act & Assert - Wrong parameter type (string instead of int)
+        var ex = Assert.Throws<NotImplementedException>(() =>
+            registry.Invoke("get-user", new { id = "not-an-int" })
+        );
     }
 
     [Fact]
-    public void Invoke_WithNonExistentOperation_ReturnsNull()
+    public void Invoke_WithNonExistentOperation_ThrowsNotImplementedException()
     {
         // Arrange
         var version = new SemanticVersion(1, 0, 0);
         var services = new object[] { new TestServiceV1() };
         var registry = new OperationRegistry(version, services);
 
-        // Act
-        var result = registry.Invoke("non-existent-operation", new { id = 123 });
-
-        // Assert
-        Assert.Null(result);
+        // Act & Assert
+        var ex = Assert.Throws<NotImplementedException>(() =>
+            registry.Invoke("non-existent-operation", new { id = 123 })
+        );
     }
 
     [Fact]
@@ -180,8 +244,9 @@ public class OperationRegistryTests
         var registry = new OperationRegistry(version, services);
 
         // Assert - No operations should be available for v0.9.0
-        var result = registry.Invoke("get-user", new { id = 123 });
-        Assert.Null(result);
+        var ex = Assert.Throws<NotImplementedException>(() =>
+            registry.Invoke("get-user", new { id = 123 })
+        );
     }
 
     [Fact]
@@ -241,8 +306,9 @@ public class OperationRegistryTests
         var registry = new OperationRegistry(version, services);
 
         // Assert - Non-operation method should not be invocable
-        var result = registry.Invoke("NonOperationMethod");
-        Assert.Null(result);
+        var ex = Assert.Throws<NotImplementedException>(() =>
+            registry.Invoke("NonOperationMethod")
+        );
     }
 
     [Fact]
@@ -427,8 +493,9 @@ public class OperationRegistryTests
         var registry = new OperationRegistry(version, services);
 
         // Assert - V1 delete-user (until: 1.5.0) should NOT be available
-        var result = registry.Invoke("delete-user", new { id = 123 });
-        Assert.Null(result);
+        var ex = Assert.Throws<NotImplementedException>(() =>
+            registry.Invoke("delete-user", new { id = 123 })
+        );
     }
 
     [Theory]
@@ -461,8 +528,355 @@ public class OperationRegistryTests
         var registry = new OperationRegistry(version, services);
 
         // Assert - V2 get-user (since: 2.0.0) should NOT be available
-        var result = registry.Invoke("get-user", new { id = 123 });
+        var ex = Assert.Throws<NotImplementedException>(() =>
+            registry.Invoke("get-user", new { id = 123 })
+        );
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WithAsyncMethod_ReturnsAwaitedResult()
+    {
+        // Arrange
+        var testService = new TestServiceWithAsyncMethods();
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { testService };
+        var registry = new OperationRegistry(version, services);
+
+        // Act
+        var result = await registry.InvokeAsync("async-operation", new { id = 123 });
+
+        // Assert
+        Assert.Equal("Async-123", result);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WithVoidAsyncMethod_ReturnsNull()
+    {
+        // Arrange
+        var testService = new TestServiceWithAsyncMethods();
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { testService };
+        var registry = new OperationRegistry(version, services);
+
+        // Act
+        var result = await registry.InvokeAsync("void-async-operation", new { data = "test" });
+
+        // Assert
         Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WithSyncMethod_WrapsInTask()
+    {
+        // Arrange
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { new TestServiceV1() };
+        var registry = new OperationRegistry(version, services);
+
+        // Act
+        var result = await registry.InvokeAsync("get-user", new { id = 123 });
+
+        // Assert
+        Assert.Equal("User-V1-123", result);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WithAsyncMethodHavingNullableParams_HandlesCorrectly()
+    {
+        // Arrange
+        var testService = new TestServiceWithAsyncMethods();
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { testService };
+        var registry = new OperationRegistry(version, services);
+
+        // Act
+        var result = await registry.InvokeAsync("async-with-nullable", new { id = 456 });
+
+        // Assert
+        Assert.Equal("AsyncNullable-456-null", result);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WithNonExistentOperation_ThrowsNotImplementedException()
+    {
+        // Arrange
+        var testService = new TestServiceWithAsyncMethods();
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { testService };
+        var registry = new OperationRegistry(version, services);
+
+        // Act & Assert
+        var ex = await Assert.ThrowsAsync<NotImplementedException>(() =>
+            registry.InvokeAsync("non-existent-async-operation", new { id = 123 })
+        );
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WithIncompatibleArguments_ThrowsNotImplementedException()
+    {
+        // Arrange
+        var testService = new TestServiceWithAsyncMethods();
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { testService };
+        var registry = new OperationRegistry(version, services);
+
+        // Act & Assert
+        var ex = await Assert.ThrowsAsync<NotImplementedException>(() =>
+            registry.InvokeAsync("async-operation", new { wrongParam = "test" })
+        );
+    }
+
+    [Theory]
+    [InlineData("1.0.0", "versioned-async", 123, "AsyncV1-123")]
+    [InlineData("2.0.0", "versioned-async", 123, "AsyncV2-123")]
+    public async Task InvokeAsync_WithVersionSpecificAsyncOperations_InvokesCorrectVersion(
+        string versionString,
+        string operationKey,
+        int argument,
+        string expected
+    )
+    {
+        // Arrange
+        var version = new SemanticVersion(versionString);
+        var services = new object[] { new TestServiceWithAsyncVersions() };
+        var registry = new OperationRegistry(version, services);
+
+        // Act
+        var result = await registry.InvokeAsync(operationKey, new { id = argument });
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void Invoke_WithBothSyncAndAsync_PrefersSync()
+    {
+        // Arrange
+        var testService = new TestServiceWithBothSyncAndAsync();
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { testService };
+        var registry = new OperationRegistry(version, services);
+
+        // Act
+        var result = registry.Invoke("flexible-operation", new { id = 123 });
+
+        // Assert - Should prefer sync method
+        Assert.Equal("Sync-123", result);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WithBothSyncAndAsync_PrefersAsync()
+    {
+        // Arrange
+        var testService = new TestServiceWithBothSyncAndAsync();
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { testService };
+        var registry = new OperationRegistry(version, services);
+
+        // Act
+        var result = await registry.InvokeAsync("flexible-operation", new { id = 123 });
+
+        // Assert - Should prefer async method
+        Assert.Equal("Async-123", result);
+    }
+
+    [Fact]
+    public void Invoke_WithHigherPrioritySync_ChoosesSyncOverAsync()
+    {
+        // Arrange
+        var testService = new TestServiceWithBothSyncAndAsync();
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { testService };
+        var registry = new OperationRegistry(version, services);
+
+        // Act - Priority 2 sync vs Priority 1 async
+        var result = registry.Invoke("priority-test-sync", new { id = 789 });
+
+        // Assert - Higher priority should win regardless of sync preference
+        Assert.Equal("HighSync-789", result);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WithHigherPrioritySync_StillChoosesSyncButConverts()
+    {
+        // Arrange
+        var testService = new TestServiceWithBothSyncAndAsync();
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { testService };
+        var registry = new OperationRegistry(version, services);
+
+        // Act - Priority 2 sync vs Priority 1 async, but called via InvokeAsync
+        var result = await registry.InvokeAsync("priority-test-sync", new { id = 789 });
+
+        // Assert - Higher priority sync should be chosen and wrapped in Task
+        Assert.Equal("HighSync-789", result);
+    }
+
+    [Fact]
+    public void Invoke_WithAsyncOnlyMethod_BlocksAndReturnsResult()
+    {
+        // Arrange
+        var testService = new TestServiceWithAsyncMethods();
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { testService };
+        var registry = new OperationRegistry(version, services);
+
+        // Act - Call sync Invoke on async-only method
+        var result = registry.Invoke("async-operation", new { id = 555 });
+
+        // Assert - Should block and return the result
+        Assert.Equal("Async-555", result);
+    }
+
+    [Fact]
+    public void Invoke_WithAsyncVoidMethod_ReturnsNull()
+    {
+        // Arrange
+        var testService = new TestServiceWithAsyncMethods();
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { testService };
+        var registry = new OperationRegistry(version, services);
+
+        // Act - Call sync Invoke on void async method
+        var result = registry.Invoke("void-async-operation", new { data = "test" });
+
+        // Assert - Should return null for void async
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WithSyncOnlyMethod_WrapsInTask()
+    {
+        // Arrange
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { new TestServiceV1() };
+        var registry = new OperationRegistry(version, services);
+
+        // Act - Call async InvokeAsync on sync-only method
+        var result = await registry.InvokeAsync("create-user", new { name = "AsyncTest" });
+
+        // Assert - Should wrap sync result in Task
+        Assert.Equal("Created-V1-AsyncTest", result);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WithComplexAsyncOperation_HandlesCorrectly()
+    {
+        // Arrange
+        var testService = new TestServiceWithAsyncMethods();
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { testService };
+        var registry = new OperationRegistry(version, services);
+
+        // Act - Complex async operation with nullable parameters
+        var result = await registry.InvokeAsync("async-with-nullable", new { id = 999, optional = "provided" });
+
+        // Assert
+        Assert.Equal("AsyncNullable-999-provided", result);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WithMultipleAsyncServices_SelectsCorrectly()
+    {
+        // Arrange
+        var version = new SemanticVersion(2, 0, 0);
+        var services = new object[]
+        {
+            new TestServiceWithAsyncMethods(),
+            new TestServiceWithAsyncVersions()
+        };
+        var registry = new OperationRegistry(version, services);
+
+        // Act - Should select V2 async method due to version
+        var result = await registry.InvokeAsync("versioned-async", new { id = 111 });
+
+        // Assert
+        Assert.Equal("AsyncV2-111", result);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WithAsyncMethodReturningNull_HandlesCorrectly()
+    {
+        // Arrange
+        var testService = new TestServiceWithAsyncMethods();
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { testService };
+        var registry = new OperationRegistry(version, services);
+
+        // Act - Test void async method which returns null
+        var result = await registry.InvokeAsync("void-async-operation", new { data = "test" });
+
+        // Assert - Void async should return null
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Invoke_WithMixedSyncAsyncServices_SelectsCorrectMethodType()
+    {
+        // Arrange - Mix of sync and async services
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[]
+        {
+            new TestServiceV1(),  // Has sync methods
+            new TestServiceWithAsyncMethods(),  // Has async methods
+            new TestServiceWithBothSyncAndAsync()  // Has both
+        };
+        var registry = new OperationRegistry(version, services);
+
+        // Act - Call sync Invoke on operation that exists in both sync and async variants
+        var result = registry.Invoke("flexible-operation", new { id = 999 });
+
+        // Assert - Should prefer sync version when calling Invoke
+        Assert.Equal("Sync-999", result);
+    }
+
+    [Fact]
+    public void Invoke_WithMissingNullableParameter_AssignsNullCorrectly()
+    {
+        // Arrange
+        var testService = new TestServiceWithNullables();
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { testService };
+        var registry = new OperationRegistry(version, services);
+
+        // Act - Call without providing the nullable parameter
+        var result = registry.Invoke("nullable-test", new { id = 123 });
+
+        // Assert - Nullable parameter should receive null automatically
+        Assert.Equal("123-null", result);
+    }
+
+    [Fact]
+    public void Invoke_WithMixedRequiredAndNullableParameters_HandlesCorrectly()
+    {
+        // Arrange
+        var testService = new TestServiceWithNullables();
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { testService };
+        var registry = new OperationRegistry(version, services);
+
+        // Act - Provide required parameters but omit nullable parameter
+        var result = registry.Invoke("mixed-params-test", new { requiredId = 456, requiredName = "TestUser" });
+
+        // Assert - Required parameters used, nullable parameter gets null
+        Assert.Equal("456-TestUser-null", result);
+    }
+
+    [Fact]
+    public void Invoke_WithMissingRequiredNonNullableParameter_ThrowsException()
+    {
+        // Arrange
+        var testService = new TestServiceWithNullables();
+        var version = new SemanticVersion(1, 0, 0);
+        var services = new object[] { testService };
+        var registry = new OperationRegistry(version, services);
+
+        // Act & Assert - Missing required non-nullable parameter should throw
+        var ex = Assert.Throws<NotImplementedException>(() =>
+            registry.Invoke("mixed-params-test", new { requiredId = 456 }) // Missing requiredName
+        );
+
+        Assert.Contains("No compatible method signature found", ex.Message);
     }
 
 }
