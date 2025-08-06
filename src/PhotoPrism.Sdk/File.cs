@@ -1,0 +1,57 @@
+using System.Text.Json.Serialization;
+
+namespace PhotoPrism.Sdk;
+
+/// <summary>
+/// Internal record implementation of IFile.
+/// </summary>
+internal record File(
+    [property: JsonPropertyName("UID")] string? UID = default,
+    [property: JsonPropertyName("PhotoUID")] string? PhotoUID = default,
+    [property: JsonPropertyName("Name")] string? Name = default,
+    [property: JsonPropertyName("OriginalName")] string? OriginalName = default,
+    [property: JsonPropertyName("Hash")] string? Hash = default,
+    [property: JsonPropertyName("Root")] string? Root = default,
+    [property: JsonPropertyName("Mime")] string? Mime = default,
+    [property: JsonPropertyName("FileType")] string? FileType = default,
+    [property: JsonPropertyName("MediaType")] string? MediaType = default,
+    [property: JsonPropertyName("MediaID")] string? MediaID = default,
+    [property: JsonPropertyName("InstanceID")] string? InstanceID = default,
+    [property: JsonPropertyName("TimeIndex")] string? TimeIndex = default,
+    [property: JsonPropertyName("Size")] int Size = default,
+    [property: JsonPropertyName("Width")] int Width = default,
+    [property: JsonPropertyName("Height")] int Height = default,
+    [property: JsonPropertyName("AspectRatio")] float AspectRatio = default,
+    [property: JsonPropertyName("Portrait")] bool Portrait = default,
+    [property: JsonPropertyName("Orientation")] int Orientation = default,
+    [property: JsonPropertyName("OrientationSrc")] string? OrientationSrc = default,
+    [property: JsonPropertyName("MainColor")] string? MainColor = default,
+    [property: JsonPropertyName("Colors")] string? Colors = default,
+    [property: JsonPropertyName("Luminance")] string? Luminance = default,
+    [property: JsonPropertyName("Chroma")] int Chroma = default,
+    [property: JsonPropertyName("Diff")] int Diff = default,
+    [property: JsonPropertyName("Primary")] bool Primary = default,
+    [property: JsonPropertyName("Sidecar")] bool Sidecar = default,
+    [property: JsonPropertyName("Video")] bool Video = default,
+    [property: JsonPropertyName("Missing")] bool Missing = default,
+    [property: JsonPropertyName("HDR")] bool HDR = default,
+    [property: JsonPropertyName("Watermark")] bool Watermark = default,
+    [property: JsonPropertyName("Codec")] string? Codec = default,
+    [property: JsonPropertyName("FPS")] float FPS = default,
+    [property: JsonPropertyName("Frames")] int Frames = default,
+    [property: JsonPropertyName("Pages")] int Pages = default,
+    [property: JsonPropertyName("Duration")] TimeSpan? Duration = default,
+    [property: JsonPropertyName("ColorProfile")] string? ColorProfile = default,
+    [property: JsonPropertyName("Projection")] string? Projection = default,
+    [property: JsonPropertyName("Software")] string? Software = default,
+    [property: JsonPropertyName("TakenAt")] DateTime? TakenAt = default,
+    [property: JsonPropertyName("MediaUTC")] int MediaUTC = default,
+    [property: JsonPropertyName("ModTime")] int ModTime = default,
+    [property: JsonPropertyName("CreatedIn")] int CreatedIn = default,
+    [property: JsonPropertyName("UpdatedIn")] int UpdatedIn = default,
+    [property: JsonPropertyName("Error")] string? Error = default,
+    [property: JsonPropertyName("CreatedAt")] DateTime? CreatedAt = default,
+    [property: JsonPropertyName("UpdatedAt")] DateTime? UpdatedAt = default,
+    [property: JsonPropertyName("DeletedAt")] DateTime? DeletedAt = default,
+    [property: JsonPropertyName("PublishedAt")] DateTime? PublishedAt = default
+) : IFile;
