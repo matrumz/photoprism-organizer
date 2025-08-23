@@ -2,6 +2,8 @@
     "cSpell.words": [
         "appsettings",
         "Devcontainer",
+        "innodb",
+        "photoprism",
         "Serilog"
     ],
     "editor.formatOnSave": true,
@@ -9,5 +11,25 @@
         "**/bin/": true,
         "**/obj/": true,
         ".mono/": true,
-    }
+    },
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#ead4ff",
+        "activityBar.background": "#ead4ff",
+        "activityBar.foreground": "#15202b",
+        "activityBar.inactiveForeground": "#15202b99",
+        "activityBarBadge.background": "#df7200",
+        "activityBarBadge.foreground": "#15202b",
+        "commandCenter.border": "#15202b99",
+        "sash.hoverBorder": "#ead4ff",
+        "statusBar.background": "#d2a2fe",
+        "statusBar.foreground": "#15202b",
+        "statusBarItem.hoverBackground": "#ba70fd",
+        "statusBarItem.remoteBackground": "#d2a2fe",
+        "statusBarItem.remoteForeground": "#15202b",
+        "titleBar.activeBackground": "#d2a2fe",
+        "titleBar.activeForeground": "#15202b",
+        "titleBar.inactiveBackground": "#d2a2fe99",
+        "titleBar.inactiveForeground": "#15202b99"
+    },
+    "peacock.remoteColor": "#d2a2fe"
 }
