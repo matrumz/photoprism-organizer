@@ -283,26 +283,6 @@ public interface IPhoto
     string? CreatedBy { get; }
 
     /// <summary>
-    /// Associated camera information.
-    /// </summary>
-    ICamera? Camera { get; }
-
-    /// <summary>
-    /// Associated lens information.
-    /// </summary>
-    ILens? Lens { get; }
-
-    /// <summary>
-    /// Associated place information.
-    /// </summary>
-    IPlace? Place { get; }
-
-    /// <summary>
-    /// Associated cell information.
-    /// </summary>
-    ICell? Cell { get; }
-
-    /// <summary>
     /// Additional photo details.
     /// </summary>
     IPhotoDetails? Details { get; }

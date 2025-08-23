@@ -61,20 +61,12 @@ internal record Photo(
     [property: JsonPropertyName("checkedAt")] DateTime? CheckedAt = default,
     [property: JsonPropertyName("PublishedAt")] DateTime? PublishedAt = default,
     [property: JsonPropertyName("CreatedBy")] string? CreatedBy = default,
-    [property: JsonPropertyName("Camera")] Camera? Camera = default,
-    [property: JsonPropertyName("Lens")] Lens? Lens = default,
-    [property: JsonPropertyName("Place")] Place? Place = default,
-    [property: JsonPropertyName("Cell")] Cell? Cell = default,
     [property: JsonPropertyName("Details")] PhotoDetails? Details = default,
     [property: JsonPropertyName("files")] IReadOnlyList<File>? Files = default,
     [property: JsonPropertyName("labels")] IReadOnlyList<PhotoLabel>? Labels = default,
     [property: JsonPropertyName("Albums")] IReadOnlyList<Album>? Albums = default
 ) : IPhoto
 {
-    ICamera? IPhoto.Camera => Camera;
-    ILens? IPhoto.Lens => Lens;
-    IPlace? IPhoto.Place => Place;
-    ICell? IPhoto.Cell => Cell;
     IPhotoDetails? IPhoto.Details => Details;
     IReadOnlyList<IFile>? IPhoto.Files => Files?.Cast<IFile>().ToList();
     IReadOnlyList<IPhotoLabel>? IPhoto.Labels => Labels?.Cast<IPhotoLabel>().ToList();
