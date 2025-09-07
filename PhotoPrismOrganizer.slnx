@@ -4,6 +4,7 @@
     <Project Path="src/PhotoPrismOrganizer.Common/PhotoPrismOrganizer.Common.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/PhotoPrism.Sdk.Tests/PhotoPrism.Sdk.Tests.csproj" />
     <Project Path="tests/PhotoPrismOrganizer.Common.Tests/PhotoPrismOrganizer.Common.Tests.csproj" />
   </Folder>
 </Solution>
