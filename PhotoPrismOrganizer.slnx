@@ -2,6 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/PhotoPrism.Sdk/PhotoPrism.Sdk.csproj" />
     <Project Path="src/PhotoPrismOrganizer.Common/PhotoPrismOrganizer.Common.csproj" />
+    <Project Path="src/PhotoPrismOrganizer.Web/PhotoPrismOrganizer.Web.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/PhotoPrism.Sdk.Tests/PhotoPrism.Sdk.Tests.csproj" />
