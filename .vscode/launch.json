@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        { // https://learn.microsoft.com/en-us/aspnet/core/blazor/debug?view=aspnetcore-9.0&tabs=visual-studio-code
+            "name": "PhotoPrismOrganizer.Web - Launch Debug",
+            "type": "blazorwasm",
+            "request": "launch",
+            "hosted": true,
+            "cwd": "${workspaceFolder}/src/PhotoPrismOrganizer.Web",
+            "program": "${workspaceFolder}/src/PhotoPrismOrganizer.Web/bin/Debug/net9.0/PhotoPrismOrganizer.Web.dll",
+            "browser": "chrome",
+            "url": "http://localhost:5297",
+            "internalConsoleOptions": "openOnSessionStart",
+            "serverReadyAction": {
+                "action": "debugWithChrome",
+                "killOnServerStop": true
+            }
+        },
+    ],
+}
