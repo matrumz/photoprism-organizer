@@ -12,6 +12,11 @@ trim_trailing_whitespace = true
 [*.{json,jsonc}]
 indent_size = 2
 
+# .NET Generated Json files
+[**/Properties/launchSettings.json]
+indent_size = 2
+indent_style = space
+
 # Yaml files
 [*.{yml,yaml}]
 indent_size = 2
@@ -55,8 +60,8 @@ end_of_line = crlf
 indent_style = tab
 indent_size = 2
 
-# C# files
-[*.cs]
+# C# files - https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions
+[*.{cs,vb,razor,css}]
 
 #### Core EditorConfig Options ####
 
@@ -66,7 +71,6 @@ indent_style = space
 tab_width = 4
 
 #### .NET Coding Conventions ####
-[*.{cs,vb}]
 
 # Organize usings
 dotnet_separate_import_directive_groups = true
