@@ -12,6 +12,7 @@ public class Program
                 .AddRazorComponents()
                 .AddInteractiveServerComponents()
             )
+            .ConfigureServices(PhotoPrism.Sdk.Hosting.Startup.ConfigureServices)
             .Build()
             .Configure(app =>
             {
