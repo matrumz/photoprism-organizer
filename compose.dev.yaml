@@ -1,5 +1,4 @@
 services:
-
   devcontainer:
     build:
       args:
@@ -9,7 +8,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: devcontainer
-    command: [ "-c", "sleep infinity" ]
+    command: ["-c", "sleep infinity"]
     entrypoint: bash
     network_mode: host
     ports:
