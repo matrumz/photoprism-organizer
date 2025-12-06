@@ -9,6 +9,7 @@ public class Program
     public static void Main(string[] args) =>
         WebApplication.CreateBuilder(args)
             .ConfigureServices(services => services
+                .AddAntiforgery()
                 .AddRazorComponents()
                 .AddInteractiveServerComponents()
             )
