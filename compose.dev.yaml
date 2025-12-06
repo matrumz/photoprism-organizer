@@ -3,7 +3,7 @@ services:
     build:
       args:
         DEVCONTAINER_USER_GID: ${DEVCONTAINER_USER_GID:-1000}
-        DEVCONTAINER_USER_NAME: ${DEVCONTAINER_USER_NAME:-dev}
+        DEVCONTAINER_USER_NAME: ${DEVCONTAINER_USER_NAME:-ubuntu}
         DEVCONTAINER_USER_UID: ${DEVCONTAINER_USER_UID:-1000}
       context: .
       dockerfile: Dockerfile
@@ -16,7 +16,7 @@ services:
         target: 8080
     volumes:
       - source: devcontainer.data
-        target: /home/dev
+        target: /home/${DEVCONTAINER_USER_NAME:-ubuntu}
         type: volume
         volume:
           nocopy: false
@@ -24,12 +24,12 @@ services:
       - bind:
           create_host_path: false
         source: ${HOME}/.gitconfig
-        target: /home/dev/.gitconfig
+        target: /home/${DEVCONTAINER_USER_NAME:-ubuntu}/.gitconfig
         type: bind
       - bind:
           create_host_path: false
         source: ${HOME}/.ssh
-        target: /home/dev/.ssh
+        target: /home/${DEVCONTAINER_USER_NAME:-ubuntu}/.ssh
         type: bind
       - bind:
           create_host_path: false
