@@ -12,4 +12,13 @@ public static class WebApplicationBuilderExtensions
         return builder;
     }
 
+    public static WebApplicationBuilder ConfigureServices(
+        this WebApplicationBuilder builder,
+        Action<IServiceCollection, IHostApplicationBuilder> configureServices
+    )
+    {
+        configureServices(builder.Services, builder);
+        return builder;
+    }
+
 }
