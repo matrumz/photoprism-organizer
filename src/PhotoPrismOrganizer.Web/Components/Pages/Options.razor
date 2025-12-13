@@ -1,0 +1,14 @@
+@page "/options"
+@using PhotoPrism.Sdk
+@rendermode InteractiveServer
+@inject OptionsPrinter OptionsPrinter
+
+<PageTitle>Options</PageTitle>
+
+<h1>Options</h1>
+
+<button class="btn btn-primary" @onclick="OptionsPrinter.PrintOptions">Print options</button>
+
+@code {
+
+}
