@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using PhotoPrism.Sdk.Rest.V1;
+
 namespace PhotoPrism.Sdk.Hosting;
 
 public static class Startup
@@ -8,6 +10,8 @@ public static class Startup
 
     public static void ConfigureServices(IServiceCollection services, IHostApplicationBuilder builder) => services
         .Configure<PhotoPrismSdkOptions>(builder.Configuration.GetSection(PhotoPrismSdkOptions.SectionName))
+        .AddHostedService<BootstrapService>()
+        .AddSingleton<PhotosRestClient>()
         .AddHttpClient("PhotoPrism", client =>
         {
             var baseUrl = Environment.GetEnvironmentVariable("PHOTOPRISM_SITE_URL") ?? "http://host.docker.internal:2342";
