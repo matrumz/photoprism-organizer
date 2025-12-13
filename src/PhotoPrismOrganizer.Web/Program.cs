@@ -1,6 +1,8 @@
 using PhotoPrismOrganizer.Web.Components;
 using PhotoPrismOrganizer.Web.Extensions;
 
+using Serilog;
+
 namespace PhotoPrismOrganizer.Web;
 
 public class Program
@@ -8,8 +10,14 @@ public class Program
 
     public static void Main(string[] args) =>
         WebApplication.CreateBuilder(args)
-            .ConfigureServices(services => services
+            .ConfigureServices((services, builder) => services
+                // General Services
                 .AddAntiforgery()
+                .AddSerilog(new LoggerConfiguration()
+                    .ReadFrom.Configuration(builder.Configuration)
+                    .CreateLogger()
+                )
+                // Razor Components
                 .AddRazorComponents()
                 .AddInteractiveServerComponents()
             )
