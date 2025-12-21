@@ -5,7 +5,7 @@ using Serilog;
 
 namespace PhotoPrism.Sdk;
 
-public partial class Client(
+internal partial class Client(
     ILogger logger,
     OperationRegistry operationRegistry
 ) : IClient

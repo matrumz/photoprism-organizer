@@ -1,6 +1,6 @@
 namespace PhotoPrism.Sdk;
 
-public partial class Client
+internal partial class Client
 {
 
     public async Task<IReadOnlyList<IPhotoSearchResult>> SearchPhotosAsync(
