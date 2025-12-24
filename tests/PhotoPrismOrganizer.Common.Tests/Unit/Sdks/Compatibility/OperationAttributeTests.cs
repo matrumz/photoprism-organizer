@@ -1,3 +1,5 @@
+using NuGet.Versioning;
+
 using PhotoPrismOrganizer.Common.Sdks.Compatibility;
 
 namespace PhotoPrismOrganizer.Common.Tests.Unit.Sdks.Compatibility;
@@ -88,7 +90,7 @@ public class OperationAttributeTests
     )
     {
         // Arrange
-        var currentVersion = new SemanticVersion(currentVersionString);
+        var currentVersion = SemanticVersion.Parse(currentVersionString);
         var attribute = new OperationAttribute("test-op", since: since, until: until);
 
         // Act
@@ -118,8 +120,8 @@ public class OperationAttributeTests
     }
 
     [Theory]
-    [InlineData("v1.0.0", "1.0.0", true)]  // Version prefix handling
-    [InlineData("V2.0.0", "2.0.0", true)]  // Case insensitive prefix
+    [InlineData("1.0.0", "1.0.0", true)]  // Version prefix handling
+    [InlineData("2.0.0", "2.0.0", true)]  // Case insensitive prefix
     [InlineData("1.0", "1.0.0", true)]     // Partial version
     public void IsApplicable_WithVersionParsing_HandlesVariousFormats(
         string constraintVersion,
@@ -128,7 +130,7 @@ public class OperationAttributeTests
     )
     {
         // Arrange
-        var currentVersion = new SemanticVersion(currentVersionString);
+        var currentVersion = SemanticVersion.Parse(currentVersionString);
         var attribute = new OperationAttribute("test-op", since: constraintVersion);
 
         // Act

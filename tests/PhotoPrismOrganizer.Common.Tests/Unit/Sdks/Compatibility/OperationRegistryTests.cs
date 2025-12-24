@@ -1,3 +1,5 @@
+using NuGet.Versioning;
+
 using PhotoPrismOrganizer.Common.Sdks.Compatibility;
 
 namespace PhotoPrismOrganizer.Common.Tests.Unit.Sdks.Compatibility;
@@ -165,7 +167,7 @@ public class OperationRegistryTests
     )
     {
         // Arrange
-        var version = new SemanticVersion(versionString);
+        var version = SemanticVersion.Parse(versionString);
         var services = new object[] { new TestServiceV1(), new TestServiceV2(), new TestServiceV3() };
         var registry = new OperationRegistry(version, services);
 
@@ -339,7 +341,7 @@ public class OperationRegistryTests
     )
     {
         // Arrange
-        var version = new SemanticVersion(versionString);
+        var version = SemanticVersion.Parse(versionString);
         var services = new object[] { new TestServiceV1() };
         var registry = new OperationRegistry(version, services);
 
@@ -469,7 +471,7 @@ public class OperationRegistryTests
     public void Constructor_WithVersionBeforeUntilBoundary_IncludesOperation(string versionString)
     {
         // Arrange - Test versions that should be included (< 1.5.0)
-        var version = new SemanticVersion(versionString);
+        var version = SemanticVersion.Parse(versionString);
         var services = new object[] { new TestServiceV1() };
 
         // Act
@@ -486,7 +488,7 @@ public class OperationRegistryTests
     public void Constructor_WithVersionAfterUntilBoundary_ExcludesOperation(string versionString)
     {
         // Arrange - Test versions that should exclude the operation (> 1.5.0)
-        var version = new SemanticVersion(versionString);
+        var version = SemanticVersion.Parse(versionString);
         var services = new object[] { new TestServiceV1() };
 
         // Act
@@ -504,7 +506,7 @@ public class OperationRegistryTests
     public void Constructor_WithVersionAfterSinceBoundary_IncludesOperation(string versionString)
     {
         // Arrange - Test versions that should include the operation (> 2.0.0)
-        var version = new SemanticVersion(versionString);
+        var version = SemanticVersion.Parse(versionString);
         var services = new object[] { new TestServiceV2() };
 
         // Act
@@ -521,7 +523,7 @@ public class OperationRegistryTests
     public void Constructor_WithVersionBeforeSinceBoundary_ExcludesOperation(string versionString)
     {
         // Arrange - Test versions that should exclude the operation (< 2.0.0)
-        var version = new SemanticVersion(versionString);
+        var version = SemanticVersion.Parse(versionString);
         var services = new object[] { new TestServiceV2() };
 
         // Act
@@ -637,7 +639,7 @@ public class OperationRegistryTests
     )
     {
         // Arrange
-        var version = new SemanticVersion(versionString);
+        var version = SemanticVersion.Parse(versionString);
         var services = new object[] { new TestServiceWithAsyncVersions() };
         var registry = new OperationRegistry(version, services);
 

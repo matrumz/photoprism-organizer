@@ -1,5 +1,9 @@
 using System.Reflection;
 
+using NuGet.Versioning;
+
+using PhotoPrismOrganizer.Common.Extensions;
+
 namespace PhotoPrismOrganizer.Common.Sdks.Compatibility;
 
 /// <summary>

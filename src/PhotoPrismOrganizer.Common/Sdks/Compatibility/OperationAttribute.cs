@@ -1,3 +1,7 @@
+using NuGet.Versioning;
+
+using PhotoPrismOrganizer.Common.Extensions;
+
 namespace PhotoPrismOrganizer.Common.Sdks.Compatibility;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
