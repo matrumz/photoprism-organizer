@@ -1,17 +1,19 @@
 using System.Net;
 using System.Text;
 
+using Microsoft.Extensions.Logging;
+
 using Moq;
-using Serilog;
 
 using PhotoPrism.Sdk.Rest.V1;
+
 using PhotoPrismOrganizer.Common.Apis.Exceptions;
 
 namespace PhotoPrism.Sdk.Tests.Unit.Rest.V1;
 
 public class PhotosRestClientTests
 {
-    private static (PhotosRestClient client, Mock<IHttpClientFactory> httpFactory, Mock<ILogger> logger) CreateClient(HttpResponseMessage response, Action<HttpRequestMessage>? capture = null)
+    private static (PhotosRestClient client, Mock<IHttpClientFactory> httpFactory, Mock<ILogger<PhotosRestClient>> logger) CreateClient(HttpResponseMessage response, Action<HttpRequestMessage>? capture = null)
     {
         var handler = new StubHttpMessageHandler(response, capture);
         var httpClient = new HttpClient(handler)
@@ -22,7 +24,7 @@ public class PhotosRestClientTests
         var httpFactory = new Mock<IHttpClientFactory>();
         httpFactory.Setup(f => f.CreateClient("PhotoPrism")).Returns(httpClient);
 
-        var logger = new Mock<ILogger>();
+        var logger = new Mock<ILogger<PhotosRestClient>>();
 
         var client = new PhotosRestClient(httpFactory.Object, logger.Object);
         return (client, httpFactory, logger);

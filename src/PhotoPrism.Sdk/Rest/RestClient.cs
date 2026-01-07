@@ -1,7 +1,7 @@
 using System.Text.Json;
 
 using Microsoft.AspNetCore.Http;
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 using PhotoPrismOrganizer.Common.Apis.Exceptions;
 using PhotoPrismOrganizer.Common.Extensions;
@@ -10,7 +10,7 @@ namespace PhotoPrism.Sdk.Rest;
 
 internal abstract class RestClient(
     IHttpClientFactory httpClientFactory,
-    ILogger logger
+    ILogger<RestClient> logger
 )
 {
 

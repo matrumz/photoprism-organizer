@@ -1,12 +1,12 @@
+using Microsoft.Extensions.Logging;
+
 using PhotoPrismOrganizer.Common;
 using PhotoPrismOrganizer.Common.Sdks.Compatibility;
-
-using Serilog;
 
 namespace PhotoPrism.Sdk;
 
 internal partial class Client(
-    ILogger logger,
+    ILogger<Client> logger,
     OperationRegistry operationRegistry
 ) : IClient
 {

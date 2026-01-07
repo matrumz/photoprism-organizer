@@ -1,4 +1,4 @@
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 using PhotoPrismOrganizer.Common.Sdks.Compatibility;
 
@@ -6,7 +6,7 @@ namespace PhotoPrism.Sdk.Rest.V1;
 
 internal class PhotosRestClient(
     IHttpClientFactory httpClientFactory,
-    ILogger logger
+    ILogger<PhotosRestClient> logger
 ) : RestClient(
     httpClientFactory: httpClientFactory,
     logger: logger

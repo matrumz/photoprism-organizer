@@ -1,5 +1,6 @@
+using Microsoft.Extensions.Logging;
+
 using Moq;
-using Serilog;
 
 using PhotoPrism.Sdk.Rest.V1;
 
@@ -8,7 +9,7 @@ namespace PhotoPrism.Sdk.Tests.Integration.Rest.V1;
 public class PhotosRestClientTests
 {
 
-    private static PhotosRestClient CreateClient(ILogger? logger = null)
+    private static PhotosRestClient CreateClient(ILogger<PhotosRestClient>? logger = null)
     {
         var baseUrl = Environment.GetEnvironmentVariable("PHOTOPRISM_SITE_URL") ?? "http://host.docker.internal:2342";
         var httpFactory = new Mock<IHttpClientFactory>();
@@ -17,7 +18,7 @@ public class PhotosRestClientTests
             BaseAddress = new Uri(baseUrl)
         });
 
-        logger ??= new Mock<ILogger>().Object;
+        logger ??= new Mock<ILogger<PhotosRestClient>>().Object;
 
         return new PhotosRestClient(httpFactory.Object, logger);
     }
