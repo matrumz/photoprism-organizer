@@ -5,10 +5,10 @@ using PhotoPrismOrganizer.Common.Sdks.Compatibility;
 namespace PhotoPrism.Sdk.Rest.V1;
 
 internal class PhotosRestClient(
-    IHttpClientFactory httpClientFactory,
+    HttpClient httpClient,
     ILogger<PhotosRestClient> logger
 ) : RestClient(
-    httpClientFactory: httpClientFactory,
+    httpClient: httpClient,
     logger: logger
 )
 {

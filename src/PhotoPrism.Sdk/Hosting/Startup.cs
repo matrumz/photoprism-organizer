@@ -6,13 +6,20 @@ namespace PhotoPrism.Sdk.Hosting;
 public static class Startup
 {
 
-    public static void ConfigureServices(IServiceCollection services, IHostApplicationBuilder builder) => services
-        .Configure<PhotoPrismSdkOptions>(builder.Configuration.GetSection(PhotoPrismSdkOptions.SectionName))
-        .AddHttpClient("PhotoPrism", client =>
-        {
-            var baseUrl = Environment.GetEnvironmentVariable("PHOTOPRISM_SITE_URL") ?? "http://host.docker.internal:2342";
-            client.BaseAddress = new Uri(baseUrl);
-        })
-        ;
+    public static void ConfigureServices(IServiceCollection services, IHostApplicationBuilder builder)
+    {
+        // Configure options from configuration section
+        services.Configure<PhotoPrismSdkOptions>(
+            builder.Configuration.GetSection(PhotoPrismSdkOptions.SectionName));
+
+        // Register default HttpClient for dynamic instance creation
+        // Individual instances will have BaseAddress set dynamically by ClientFactory
+        services.AddHttpClient();
+
+        // Register ClientFactory as singleton implementing both interfaces
+        services.AddSingleton<ClientFactory>();
+        services.AddSingleton<IClientFactory>(sp => sp.GetRequiredService<ClientFactory>());
+        services.AddSingleton<IClientFactoryManager>(sp => sp.GetRequiredService<ClientFactory>());
+    }
 
 }

@@ -9,7 +9,7 @@ using PhotoPrismOrganizer.Common.Extensions;
 namespace PhotoPrism.Sdk.Rest;
 
 internal abstract class RestClient(
-    IHttpClientFactory httpClientFactory,
+    HttpClient httpClient,
     ILogger<RestClient> logger
 )
 {
@@ -18,8 +18,6 @@ internal abstract class RestClient(
     {
         PropertyNameCaseInsensitive = true
     };
-
-    private HttpClient PhotoPrismHttpClient => httpClientFactory.CreateClient("PhotoPrism");
 
     /// <summary>
     /// Builds a URI for the specified path and query parameters.
@@ -44,7 +42,7 @@ internal abstract class RestClient(
         CancellationToken cancellationToken = default
     ) where TConcrete : class, TInterface =>
         ExecuteRestRequestAsync<TInterface, TConcrete>(
-            () => PhotoPrismHttpClient.GetAsync(BuildUri(path, queryParams), cancellationToken),
+            () => httpClient.GetAsync(BuildUri(path, queryParams), cancellationToken),
             operationContext ?? $"GET {path}",
             cancellationToken: cancellationToken
         );
